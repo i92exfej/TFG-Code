@@ -23,10 +23,16 @@
        [style '(border)]))
 
 ;; Sección de botones
-(define panel-botones (new vertical-pane% [parent separadorHorizontal] [alignment '(center center)]))
+(define panel-botones (new vertical-pane%
+                           [parent separadorHorizontal]
+                           [alignment '(center center)]
+                           ))
 
 ;; Sección imagen
-(define panel-imagen (new horizontal-pane% [parent separadorHorizontal]))
+(define panel-imagen (new horizontal-panel%
+                          [parent separadorHorizontal]
+                          [alignment '(center center)]
+                          ))
 
 
 ;;funcionalidades botones
@@ -118,11 +124,30 @@
                                  [style '(border)]
                                  ))
 
-;; Sección imagen
-(define panel-imagen-param (new horizontal-pane% [parent separadorVertical]
-                                                [min-height 250]))
-(define panel-datos-param (new horizontal-pane% [parent separadorVertical]
-                                                [min-height 250]))
+;; Sección selección ordenación
+(define panel-imagen-param (new horizontal-panel%
+                                [parent separadorVertical]
+                                [min-height 150]
+                                [alignment '(center center)]
+                                ))
+;; Sección datos 
+(define panel-datos-param (new horizontal-panel%
+                               [parent separadorVertical]
+                               [min-height 150]
+                               [alignment '(center center)]
+                               ))
+;; Sección introducir parámetros
+(define panel-elementos-param (new horizontal-panel%
+                                   [parent separadorVertical]
+                                   [min-height 150]
+                                   [alignment '(center center)]
+                                   ))
+;; Sección iniciar simulación
+(define panel-simulacion-param (new horizontal-panel%
+                                    [parent separadorVertical]
+                                    [min-height 150]
+                                    [alignment '(center center)]
+                                    ))
 
 
 ;;funcionalidades botones
@@ -172,65 +197,218 @@
       ;                  (send dc draw-bitmap (read-bitmap "inicio.png") 0 0))]
        ;              ) )
 
+  
 ;;obtener selección del usuario al seleccionar en la lista
         (define (clickSeleccion list-box event)
           (display (send list-box get-string-selection))
           )
-
-  
-
-(define my-list-box (new list-box%
-                         [label ""]
-                         [vert-margin 0]	 
-                         [horiz-margin 50]
-                         [min-width 200]
-                         [min-height 50]
-                         [parent panel-imagen-param]
-                         [choices '("First" "Second" "Third" "First" "Second" "Third" "First" "Second" "Third" "First" "Second" "Third" "First" "Second" "Third" "First" "Second" "Third" "First" "Second" "Third" "First" "Second" "Third") ]
-                         [style (list 'single
-                                      'column-headers)]
-                         [columns (list "Método de ordenación")]
-                         [callback clickSeleccion]))
-
-(send my-list-box set-column-width 0 180 180 180)
-
-  (define botonSalirParam1 (new button% [parent panel-imagen-param]
-                          [min-width 200]
-                          [min-height 100]
-                          [label "Volver al menú"]
-                          [callback clickSalirParam]))
-
-    (define botonSalirParam2 (new button% [parent panel-imagen-param]
-                          [min-width 200]
-                          [min-height 100]
-                          [label "Volver al menú"]
-                          [callback clickSalirParam]))
-
-      (define botonSalirParam3 (new button% [parent panel-imagen-param]
-                          [min-width 200]
-                          [min-height 100]
-                          [label "Volver al menú"]
-                          [callback clickSalirParam]))
-
-
-(define creditos-texto
-  "Realizado por: \n   José Ángel Expósito Fernández\nDirigido por: \n   Prof. Dr. Nicolás Luis Fernández García"
+        
+;;obtener selección del usuario al seleccionar en los radio buttons
+(define (clickDireccion radio-button event)
+  (display (send radio-button get-selection))
   )
 
+
+;; Fuente para opciones
+(define fuente-opciones (make-object font% 12 'default))
+
+
+;; Lista de opciones para seleccionar la ordenación
+(define my-list-box (new list-box%
+                         [label "Método de ordenación"]
+                         [vert-margin 10]	 
+                         [horiz-margin 50]
+                         [min-width 150]
+                         [min-height 50]
+                         [font fuente-opciones ]
+                         [parent panel-imagen-param]
+                         [choices '("Inserción directa"
+                                    "Inserción binaria"
+                                    "Método de Shell"
+                                    "Método de la burbuja"
+                                    "Método de la sacudida"
+                                    "Selección directa"
+                                    "Ordenación rápida"
+                                    "Ordenación por mezcla") ]
+                         [style (list 'single 'vertical-label
+                                      )]
+                         ;;[columns (list "Método de ordenación")]
+                         [callback clickSeleccion]))
+
+;(send my-list-box set-column-width 0 150 150 150)
+
+; Seleccionar la dirección de la ordenación
+(define ordenacion (new radio-box%	 
+   	 	[label "Dirección de la ordenación"]
+                [font fuente-opciones ]
+                [min-width 150]
+                [vert-margin 10]
+   	 	[choices '("Ascendente"
+                           "Descendente")]	 
+   	 	[parent panel-imagen-param]
+                [style (list 'vertical 'vertical-label
+                                      )]
+                [callback clickDireccion]))
+
+
+
+;;obtener selección del usuario al seleccionar en las text boxes
+(define (cambioTiempo text-field event)
+  (display (send text-field get-value))
+  )
+
+(define (cambioElementos text-field event)
+  (display (send text-field get-value))
+  )
+
+
+ (define campo_tiempo (new text-field%
+                           [parent panel-datos-param] 
+                           [style (list 'single 'vertical-label)]
+                           [label "Tiempo entre pasos"]
+                           [init-value "0"]
+                           [callback cambioTiempo]))
+
+  (define campo_elementos (new text-field%
+                           [parent panel-datos-param] 
+                           [style (list 'single 'vertical-label)]
+                           [label "Número de elementos"]
+                           [init-value "0"]
+                           [callback cambioElementos]))
+
+
+
+(define (introManual button event)
+  (send cajaElementos show #t)
+  )
+(define (introFichero button event)
+  (display "Desde fichero")
+  )
+(define (introAleatorio button event)
+  (display "Aleatorio")
+  )
+
+
+
+   (define elementosManual (new button% [parent panel-elementos-param]
+                           [min-width 200]
+                           [min-height 100]
+                           [horiz-margin 50]
+                           [label "Introducir manualmente"]
+                           [callback introManual]))
+  
+  (define elementosFichero (new button% [parent panel-elementos-param]
+                            [min-width 200]
+                            [min-height 100]
+                            [horiz-margin 0]
+                            [label "Introducir desde fichero"]
+                            [callback introFichero]))
+  
+  (define elementosAleatorio (new button% [parent panel-elementos-param]
+                          [min-width 200]
+                          [min-height 100]
+                          [horiz-margin 50]
+                          [label "Introducir aleatoriamente"]
+                          [callback introAleatorio]))
+
+
+
+
+
+
+;;obtener selección del usuario al seleccionar en los radio buttons
+(define (clickOrdenación radio-button event)
+  (display (send radio-button get-selection))
+  )
+
+;;Seleccionar tipo de simulacion
+(define tipoSimulacion (new radio-box%	 
+                            [label "Tipo de simulación"]
+                            [horiz-margin 100]
+                            [font fuente-opciones ]
+                            [min-width 150]
+                            [choices '("Paso a paso"
+                                       "Automática")]	 
+                            [parent panel-simulacion-param]
+                            [style (list 'vertical 'vertical-label
+                                         )]
+                            [callback clickOrdenación]))
+
+;;Boton para iniciar una simulación
+  (define botonIniciar (new button%
+                            [parent panel-simulacion-param]
+                            [min-width 200]
+                            [min-height 100]
+                            [label "Iniciar simuación"]
+                            ;[callback iniciarSimulacion]
+                            ))
+
+    
+
+;; Opciones para los créditos
+
+ ;; Panel de diálogo para los créditos
 (define Creditos (new dialog%	 
    	 	[label "Creditos"]	 
    	 	[parent menu]	 ))	 
 
+;; Texto de los creditos
+(define creditos-texto
+  "Realizado por: \n   José Ángel Expósito Fernández\nDirigido por: \n   Prof. Dr. Nicolás Luis Fernández García"
+  )
 
+;; Fuente de los créditos
 (define fuente-creditos (make-object font% 20 'default))
 
 
-
+;; Caja de texto para los creditos
 (define creditos-box (new text-field%	 
    	 	[label ""]	 
    	 	[parent Creditos]	 	 
    	 	[init-value creditos-texto]
                 [min-width 100]	 
    	 	[min-height 150]
+                
                 [font fuente-creditos]
    	 	[enabled #f]))	 
+;; Opciones para los créditos
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+;; Ventanas para introducir elementos manual
+ ;; Panel de diálogo 
+(define cajaElementos (new dialog%	 
+   	 	[label "Introducir elementos"]	 
+   	 	[parent parametros]	 ))	 
+
+;; Texto 
+(define creditos-texto
+  "(1,2,3,4,5)"
+  )
+
+;; Fuente
+(define fuente-elementos (make-object font% 12 'default))
+
+
+;; Caja de texto 
+(define creditos-box (new text-field%	 
+   	 	[label "Introducir elementos"]	 
+   	 	[parent cajaElementos]	 	 
+   	 	[init-value creditos-texto]
+                [min-width 300]	 
+   	 	[min-height 150]
+                [style (list 'single 'vertical-label
+                                         )]
+                [font fuente-elementos]
+                [callback cambioElementos]))	 
